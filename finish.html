@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S점 퇴근보고</title>
+
+<style>
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f6fa;
+  padding: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  background: white;
+  padding: 14px;
+}
+
+h2 {
+  margin: 0 0 20px 0;
+  font-size: 22px;
+}
+
+label.main-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+select, textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+}
+
+.section {
+  margin-bottom: 26px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.section-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.section-title-row .section-title {
+  margin-bottom: 0;
+}
+
+.section-help {
+  font-size: 13px;
+  color: #666;
+}
+
+.room-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.room-type {
+  width: 90px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.room-options {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 10px;
+}
+
+.room-options label {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.room-options input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+.inline-select-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.inline-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.inline-item label,
+.inline-item .section-title {
+  font-weight: bold;
+  font-size: 16px;
+  margin: 0;
+  white-space: nowrap;
+  min-width: fit-content;
+}
+
+.inline-small-select {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  max-width: 120px;
+  padding: 8px 8px;
+  margin: 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 13px;
+}
+
+.inline-help {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 18px;
+}
+
+.compact-row-wrap {
+  width: 100%;
+  overflow-x: hidden;
+  margin-bottom: 20px;
+}
+
+.compact-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 6px;
+  white-space: nowrap;
+  flex-wrap: nowrap;
+}
+
+.compact-block {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.compact-title {
+  font-weight: bold;
+  font-size: 14px;
+  flex: 0 0 auto;
+}
+
+.compact-select {
+  width: 56px;
+  min-width: 56px;
+  padding: 7px 4px;
+  margin: 0;
+  font-size: 13px;
+  flex: 0 0 auto;
+}
+
+.message-line {
+  text-align: center;
+  font-size: 14px;
+  margin: 10px 0;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+#donePage {
+  display: none;
+  min-height: 100vh;
+  background: white;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.done-message {
+  font-size: 22px;
+  font-weight: bold;
+  line-height: 1.7;
+  white-space: pre-line;
+  margin-top: 60px;
+}
+
+.reason-box {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 18px;
+  background: #fafafa;
+}
+
+.reason-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.reason-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.reason-options input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+.small-help {
+  font-size: 12px;
+  color: #666;
+  margin-top: -12px;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+
+  .compact-row {
+    gap: 4px;
+  }
+
+  .compact-block {
+    gap: 3px;
+  }
+
+  .compact-title {
+    font-size: 12px;
+  }
+
+  .compact-select {
+    width: 46px;
+    min-width: 46px;
+    padding: 6px 2px;
+    font-size: 12px;
+  }
+
+  .inline-select-row {
+    gap: 8px;
+  }
+
+  .inline-item {
+    gap: 6px;
+  }
+
+  .inline-item label,
+  .inline-item .section-title {
+    font-size: 14px;
+  }
+
+  .inline-small-select {
+    max-width: 92px;
+    font-size: 12px;
+    padding: 7px 6px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="formPage">
+
+  <h2>S점 퇴근보고</h2>
+
+  <label class="main-label">근로자</label>
+  <select id="worker">
+    <option value="">선택하세요</option>
+    <option>김한얼</option>
+    <option>박상효</option>
+    <option>기타</option>
+  </select>
+
+  <div class="section">
+    <div class="section-title">체크인 예정 (<span id="checkinPlannedCount">0</span>)</div>
+    <div id="checkinPlanned"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">체크인 완료 (<span id="checkinDoneCount">0</span>)</div>
+    <div id="checkinDone"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title-row">
+      <div class="section-title">미체크인 리마인더 (<span id="reminderCount">0</span>)</div>
+      <div class="section-help">- 아직 안온 게스트 추가 안내, 아무때나 비밀번호 체크인하면 된다. -</div>
+    </div>
+    <div id="reminder"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">노쇼</div>
+    <select id="noshowSelect" onchange="toggleNoshow()">
+      <option value="" selected>--</option>
+      <option value="없음">없음</option>
+      <option value="전날노쇼">전날노쇼</option>
+      <option value="전전날노쇼">전전날노쇼</option>
+    </select>
+
+    <div id="noshowBox" style="display:none;">
+      <div id="noshow"></div>
+    </div>
+  </div>
+
+  <div class="inline-select-row">
+    <div class="inline-item">
+      <label for="stainRemoval">이불오염 제거</label>
+      <select id="stainRemoval" class="inline-small-select">
+        <option value="" selected>--</option>
+        <option value="없음">없음</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+      </select>
+    </div>
+
+    <div class="inline-item">
+      <label for="lostItemStatus">분실물</label>
+      <select id="lostItemStatus" class="inline-small-select" onchange="handleLostItemChange()">
+        <option value="" selected>--</option>
+        <option value="없음">없음</option>
+        <option value="있음">있음</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="inline-help">- 세탁으로 안지워지는 얼룩 따로 세척 건 (락스/PB1/세제 등) -</div>
+
+  <div id="lostItemDetailSection" style="display:none;">
+    <label class="main-label">분실물 상세내용</label>
+    <textarea id="lostItemDetail" placeholder="객실번호와 분실물 내용을 입력해주세요."></textarea>
+  </div>
+
+  <div class="compact-row-wrap">
+    <div class="compact-row">
+      <div class="compact-block">
+        <span class="compact-title">오늘공실</span>
+        <select id="vacancy" class="compact-select"></select>
+      </div>
+      <div class="compact-block">
+        <span class="compact-title">내일청소</span>
+        <select id="tomorrowClean" class="compact-select"></select>
+      </div>
+      <div class="compact-block">
+        <span class="compact-title">대시보드</span>
+        <select id="dashboard" class="compact-select"></select>
+      </div>
+      <div class="compact-block">
+        <span class="compact-title">메일잔여</span>
+        <select id="naverMail" class="compact-select"></select>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="naverMailDetailSection" style="display:none;">
+    <label class="main-label">메일잔여 내용 상세</label>
+    <textarea id="naverMailDetail"></textarea>
+  </div>
+
+  <div class="compact-row-wrap">
+    <div class="compact-row">
+      <span class="compact-title">네이버 간단예약관리 (S점) 체크여부</span>
+      <select id="naverSimpleCheck" class="compact-select" style="width:90px; min-width:90px;">
+        <option value="" selected>--</option>
+        <option value="완료">완료</option>
+        <option value="미완료">미완료</option>
+      </select>
+    </div>
+  </div>
+
+  <label class="main-label">특이사항</label>
+  <textarea id="memo"></textarea>
+
+  <div id="timeReasonSection" style="display:none;">
+    <label class="main-label">퇴근시간 변동사유</label>
+    <div class="reason-box">
+      <div class="reason-options">
+        <label>
+          <input type="checkbox" id="reasonReportedToBoss" name="timeReasonCheck" value="사장님 사전보고 완료">
+          사장님 사전보고 완료 (톡이나 메세지 기록 남길것)
+        </label>
+        <label>
+          <input type="checkbox" id="reasonBossMission" name="timeReasonCheck" value="사장님 특별미션">
+          사장님 특별미션
+        </label>
+        <label>
+          <input type="checkbox" id="reasonHeavyCleaning" name="timeReasonCheck" value="청소 갯수 과다">
+          청소 갯수 과다
+        </label>
+        <label>
+          <input type="checkbox" id="reasonEtc" name="timeReasonCheck" value="기타 사유" onchange="handleEtcReasonChange()">
+          기타 사유 (직접입력)
+        </label>
+      </div>
+      <div id="etcReasonInputSection" style="display:none;">
+        <textarea id="etcReasonText" placeholder="기타 사유를 입력하세요."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <label class="main-label">추가 근무시간</label>
+  <select id="extraWorkTime">
+    <option value="" selected>--</option>
+    <option value="10분">10분</option>
+    <option value="20분">20분</option>
+    <option value="30분">30분</option>
+    <option value="40분">40분</option>
+    <option value="50분">50분</option>
+    <option value="60분">60분</option>
+    <option value="70분">70분</option>
+    <option value="80분">80분</option>
+    <option value="90분">90분</option>
+    <option value="100분">100분</option>
+    <option value="110분">110분</option>
+    <option value="120분">120분</option>
+  </select>
+  <div class="small-help">퇴근보고 외에 추가로 근무한 시간 추가해주세요.</div>
+
+  <div class="message-line" id="customMessage"></div>
+
+  <button onclick="submitForm()">퇴근보고 제출</button>
+
+</div>
+
+<div id="donePage">
+  <div class="done-message">
+  퇴근보고 제출완료.
+  메신저에 사진 올려주세요. 
+  청소객실 사진, 수건함1, 비밀번호설정 캡쳐1 </div>
+</div>
+
+<script>
+const webhookUrl = "https://hook.us2.make.com/swgwk8nx04xmiueo8moh61yhprtdbw0n";
+
+const settings = {
+  regularTime: "19:00",
+  warningMinutes: 20,
+  reasonMinutes: 40
+};
+
+const rooms = {
+  "싱글룸": ["101","102","103","201","203","301","303"],
+  "더블룸": ["202","205","302","305"],
+  "트윈룸": ["204","304"]
+};
+
+function createSection(id) {
+  const container = document.getElementById(id);
+
+  for (let type in rooms) {
+    const line = document.createElement("div");
+    line.className = "room-line";
+
+    const t = document.createElement("div");
+    t.className = "room-type";
+    t.innerText = type;
+
+    const opt = document.createElement("div");
+    opt.className = "room-options";
+
+    rooms[type].forEach(r => {
+      const label = document.createElement("label");
+
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.value = r;
+      cb.name = id;
+      cb.onchange = updateCount;
+
+      label.appendChild(cb);
+      label.append(" " + r);
+      opt.appendChild(label);
+    });
+
+    line.appendChild(t);
+    line.appendChild(opt);
+    container.appendChild(line);
+  }
+}
+
+function fillSelect(id, start, end, includeBlank = false) {
+  const select = document.getElementById(id);
+  let html = '';
+  if (includeBlank) {
+    html += '<option value="" selected>--</option>';
+  }
+  for (let i = start; i <= end; i++) {
+    if (!includeBlank && i === start) {
+      html += `<option value="${i}" selected>${i}</option>`;
+    } else {
+      html += `<option value="${i}">${i}</option>`;
+    }
+  }
+  select.innerHTML = html;
+}
+
+createSection("checkinPlanned");
+createSection("checkinDone");
+createSection("reminder");
+createSection("noshow");
+
+fillSelect("vacancy", 0, 12);
+fillSelect("tomorrowClean", 0, 12);
+fillSelect("dashboard", 0, 5);
+fillSelect("naverMail", 0, 10, true);
+
+document.getElementById("naverMail").addEventListener("change", toggleNaverMailDetail);
+
+function getChecked(name) {
+  return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(e => e.value);
+}
+
+function arraysEqualAsSet(arr1, arr2) {
+  if (arr1.length !== arr2.length) return false;
+  const set1 = new Set(arr1);
+  const set2 = new Set(arr2);
+  if (set1.size !== set2.size) return false;
+  for (const item of set1) {
+    if (!set2.has(item)) return false;
+  }
+  return true;
+}
+
+function hasOverlap(arr1, arr2) {
+  const set2 = new Set(arr2);
+  return arr1.some(item => set2.has(item));
+}
+
+function updateCount() {
+  document.getElementById("checkinPlannedCount").innerText = getChecked("checkinPlanned").length;
+  document.getElementById("checkinDoneCount").innerText = getChecked("checkinDone").length;
+  document.getElementById("reminderCount").innerText = getChecked("reminder").length;
+}
+
+function toggleNoshow() {
+  const val = document.getElementById("noshowSelect").value;
+  const box = document.getElementById("noshowBox");
+
+  if (val === "전날노쇼" || val === "전전날노쇼") {
+    box.style.display = "block";
+
+    if (val === "전날노쇼") {
+      alert("오늘 반드시 메세지 보내서 언제오는지 확인해주세요 (오후근무자대상)");
+    }
+
+    if (val === "전전날노쇼") {
+      alert("2일이나 지났고 메세지 답변 없으면 객실 2일넘게 절대 비워두지 마세요. 노쇼로 표시하거나 사장에게 바로 보고바람 비상임.");
+    }
+  } else {
+    box.style.display = "none";
+    document.querySelectorAll('input[name="noshow"]').forEach(cb => cb.checked = false);
+  }
+}
+
+function toggleNaverMailDetail() {
+  const mailValue = document.getElementById("naverMail").value;
+  const hasPending = mailValue !== "" && Number(mailValue) > 0;
+
+  const section = document.getElementById("naverMailDetailSection");
+  const textarea = document.getElementById("naverMailDetail");
+
+  if (hasPending) {
+    section.style.display = "block";
+  } else {
+    section.style.display = "none";
+    textarea.value = "";
+  }
+}
+
+function handleLostItemChange() {
+  const lostItemStatus = document.getElementById("lostItemStatus").value;
+
+  if (lostItemStatus === "있음") {
+    alert("객실번호와 분실물 내용을 입력해주세요");
+    document.getElementById("lostItemDetailSection").style.display = "block";
+    document.getElementById("lostItemDetail").focus();
+  } else {
+    document.getElementById("lostItemDetailSection").style.display = "none";
+    document.getElementById("lostItemDetail").value = "";
+  }
+}
+
+function getRegularMinutes() {
+  const [hour, minute] = settings.regularTime.split(":").map(Number);
+  return hour * 60 + minute;
+}
+
+function getCurrentTimeDiffMinutes() {
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  return currentMinutes - getRegularMinutes();
+}
+
+function formatTimeDiffText(diffMinutes) {
+  if (diffMinutes === 0) return "정시";
+  const abs = Math.abs(diffMinutes);
+  return diffMinutes > 0 ? `${abs}분 늦음` : `${abs}분 빠름`;
+}
+
+function getTimeWarningMessage() {
+  return `정규퇴근시간은 ${settings.regularTime}입니다. 시간을 준수해주세요.
+정규시간보다 ${settings.reasonMinutes}분 이상 변동시 사유를 선택해야 합니다.
+(사장에게 사전결재 받은 경우 예외)`;
+}
+
+function showTimeReasonField() {
+  document.getElementById("timeReasonSection").style.display = "block";
+}
+
+function handleEtcReasonChange() {
+  const etcChecked = document.getElementById("reasonEtc").checked;
+  const etcSection = document.getElementById("etcReasonInputSection");
+  const etcText = document.getElementById("etcReasonText");
+
+  if (etcChecked) {
+    etcSection.style.display = "block";
+    etcText.focus();
+  } else {
+    etcSection.style.display = "none";
+    etcText.value = "";
+  }
+}
+
+async function submitForm() {
+  const worker = document.getElementById("worker").value;
+  const checkinPlanned = getChecked("checkinPlanned");
+  const checkinDone = getChecked("checkinDone");
+  const reminder = getChecked("reminder");
+  const noshowMode = document.getElementById("noshowSelect").value;
+  const noshowRooms = getChecked("noshow");
+
+  const stainRemoval = document.getElementById("stainRemoval").value;
+  const lostItemStatus = document.getElementById("lostItemStatus").value;
+  const lostItemDetail = document.getElementById("lostItemDetail").value.trim();
+
+  const vacancy = document.getElementById("vacancy").value;
+  const tomorrowClean = document.getElementById("tomorrowClean").value;
+  const dashboard = document.getElementById("dashboard").value;
+  const naverMail = document.getElementById("naverMail").value;
+  const naverMailDetail = document.getElementById("naverMailDetail").value.trim();
+
+  const naverSimpleCheck = document.getElementById("naverSimpleCheck").value;
+  const memo = document.getElementById("memo").value.trim();
+  const extraWorkTime = document.getElementById("extraWorkTime").value;
+
+  const reasonReportedToBoss = document.getElementById("reasonReportedToBoss").checked;
+  const reasonBossMission = document.getElementById("reasonBossMission").checked;
+  const reasonHeavyCleaning = document.getElementById("reasonHeavyCleaning").checked;
+  const reasonEtc = document.getElementById("reasonEtc").checked;
+  const etcReasonText = document.getElementById("etcReasonText").value.trim();
+  const timeReasonSection = document.getElementById("timeReasonSection");
+
+  if (!worker) {
+    alert("근로자를 선택하세요.");
+    return;
+  }
+
+  if (noshowMode === "") {
+    alert("노쇼를 선택해주세요");
+    return;
+  }
+
+  if ((noshowMode === "전날노쇼" || noshowMode === "전전날노쇼") && noshowRooms.length === 0) {
+    alert("노쇼 객실을 선택해주세요");
+    return;
+  }
+
+  if (stainRemoval === "") {
+    alert("이불오염 제거 했는지 선택해주세요.");
+    return;
+  }
+
+  if (lostItemStatus === "") {
+    alert("분실물 여부를 선택해주세요.");
+    return;
+  }
+
+  if (lostItemStatus === "있음" && !lostItemDetail) {
+    alert("객실번호와 분실물 내용을 입력해주세요");
+    document.getElementById("lostItemDetailSection").style.display = "block";
+    document.getElementById("lostItemDetail").focus();
+    return;
+  }
+
+  if (naverMail === "") {
+    alert("메일잔여 건 있는지 확인해주세요.");
+    return;
+  }
+
+  const hasPendingMail = Number(naverMail) > 0;
+  if (hasPendingMail && naverMailDetail === "") {
+    alert("메일잔여된 내용 작성해주세요.");
+    return;
+  }
+
+  if (naverSimpleCheck === "") {
+    alert("네이버 간단예약관리 상태를 확인해주세요.");
+    return;
+  }
+
+  const diffMinutes = getCurrentTimeDiffMinutes();
+  const absDiffMinutes = Math.abs(diffMinutes);
+
+  if (absDiffMinutes >= settings.reasonMinutes) {
+    if (timeReasonSection.style.display !== "block") {
+      alert(getTimeWarningMessage());
+      showTimeReasonField();
+      return;
+    }
+
+    if (!reasonReportedToBoss && !reasonBossMission && !reasonHeavyCleaning && !reasonEtc) {
+      alert("퇴근시간 변동 사유를 선택해주세요");
+      return;
+    }
+
+    if (reasonEtc && !etcReasonText) {
+      alert("기타 사유를 입력해주세요");
+      document.getElementById("etcReasonText").focus();
+      return;
+    }
+  } else if (absDiffMinutes >= settings.warningMinutes) {
+    alert(getTimeWarningMessage());
+  }
+
+  const samePlannedAndReminder = arraysEqualAsSet(checkinPlanned, reminder);
+  const doneOverlap = hasOverlap(checkinDone, checkinPlanned) || hasOverlap(checkinDone, reminder);
+
+  if (!samePlannedAndReminder || doneOverlap) {
+    alert("체크인 예정과 미체크인 리마인더 객실은 같아야합니다.");
+    return;
+  }
+
+  const timeReasonList = [];
+  if (reasonReportedToBoss) timeReasonList.push("사장님 사전보고 완료");
+  if (reasonBossMission) timeReasonList.push("사장님 특별미션");
+  if (reasonHeavyCleaning) timeReasonList.push("청소 갯수 과다");
+  if (reasonEtc) timeReasonList.push(`기타 사유: ${etcReasonText}`);
+
+  const timeReasonText = timeReasonList.length > 0 ? timeReasonList.join(" / ") : "없음";
+
+  const checkinPlannedText = checkinPlanned.join(", ") || "없음";
+  const checkinDoneText = checkinDone.join(", ") || "없음";
+  const reminderText = reminder.join(", ") || "없음";
+  const noshowRoomsText = noshowRooms.join(", ") || "없음";
+  const noshowText = noshowMode === "없음" ? "없음" : noshowRoomsText;
+
+  const submittedAt = new Date();
+  const submittedAtText = submittedAt.toLocaleString("ko-KR");
+  const timeVariationText = formatTimeDiffText(diffMinutes);
+
+  const text =
+`[퇴근보고]
+지점: S점
+근로자: ${worker}
+제출시각: ${submittedAtText}
+
+체크인예정: ${checkinPlanned.length}개
+${checkinPlannedText}
+
+체크인완료: ${checkinDone.length}개
+${checkinDoneText}
+
+미체크인 리마인더: ${reminder.length}개
+${reminderText}
+
+노쇼: ${noshowMode} / 노쇼객실: ${noshowText}
+
+이불오염 제거: ${stainRemoval} / 분실물: ${lostItemStatus}${lostItemStatus === "있음" ? ` / ${lostItemDetail}` : ""}
+
+오늘공실: ${vacancy}
+내일청소: ${tomorrowClean}
+대시보드: ${dashboard}
+메일잔여: ${naverMail}
+메일잔여 내용 상세: ${hasPendingMail ? naverMailDetail : "없음"}
+네이버 간단예약관리 (S점) 체크여부: ${naverSimpleCheck}
+
+퇴근시간 변동사유: ${timeReasonText}
+
+추가 근무시간: ${extraWorkTime || "--"}
+
+특이사항: ${memo || "없음"}`;
+
+  const payload = {
+    report_type: "퇴근보고",
+    shift: "오후",
+    branch: "S점",
+    submitted_at: submittedAt.toISOString(),
+    submitted_at_text: submittedAtText,
+
+    worker: worker,
+
+    regular_time: settings.regularTime,
+    warning_minutes: settings.warningMinutes,
+    reason_minutes: settings.reasonMinutes,
+    time_diff_minutes: diffMinutes,
+    time_diff_abs_minutes: absDiffMinutes,
+    time_variation_text: timeVariationText,
+
+    time_reason_checks: timeReasonList,
+    time_reason_text: timeReasonText,
+    time_reason_reported_to_boss: reasonReportedToBoss ? "예" : "아니오",
+    time_reason_boss_mission: reasonBossMission ? "예" : "아니오",
+    time_reason_heavy_cleaning: reasonHeavyCleaning ? "예" : "아니오",
+    time_reason_etc_checked: reasonEtc ? "예" : "아니오",
+    time_reason_etc_text: reasonEtc ? etcReasonText : "없음",
+
+    checkin_planned_count: checkinPlanned.length,
+    checkin_planned_rooms: checkinPlannedText,
+    checkin_planned_rooms_array: checkinPlanned,
+
+    checkin_done_count: checkinDone.length,
+    checkin_done_rooms: checkinDoneText,
+    checkin_done_rooms_array: checkinDone,
+
+    reminder_count: reminder.length,
+    reminder_rooms: reminderText,
+    reminder_rooms_array: reminder,
+
+    noshow_mode: noshowMode,
+    noshow_rooms: noshowRoomsText,
+    noshow_rooms_array: noshowRooms,
+    noshow_text: noshowText,
+
+    stain_removal: stainRemoval,
+
+    lost_item_status: lostItemStatus,
+    lost_item_detail: lostItemStatus === "있음" ? lostItemDetail : "없음",
+
+    vacancy: vacancy,
+    tomorrow_clean: tomorrowClean,
+    dashboard: dashboard,
+    naver_mail: naverMail,
+    naver_mail_detail: hasPendingMail ? naverMailDetail : "없음",
+
+    naver_simple_check: naverSimpleCheck,
+
+    extra_work_time: extraWorkTime || "--",
+
+    memo: memo || "없음",
+
+    text: text
+  };
+
+  try {
+    const response = await fetch(webhookUrl, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      throw new Error("Webhook 전송 실패");
+    }
+
+    document.getElementById("formPage").style.display = "none";
+    document.getElementById("donePage").style.display = "block";
+    window.scrollTo(0, 0);
+
+  } catch (error) {
+    alert("전송 실패");
+    console.error(error);
+  }
+}
+</script>
+
+</body>
+</html>
