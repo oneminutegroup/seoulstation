@@ -229,8 +229,8 @@ button {
   <label class="main-label">근로자</label>
   <select id="worker">
     <option value="">선택하세요</option>
-    <option>김한얼</option>
-    <option>박상효</option>
+    <option>김현우</option>
+    <option>김주희</option>
     <option>기타</option>
   </select>
 
@@ -250,7 +250,7 @@ button {
   <div class="section">
     <div class="section-title-row">
       <div class="section-title">노쇼</div>
-      <div class="section-help">- 어제 도어락 log 확인해서 안 온 게스트 확인 -</div>
+      <div class="section-help">- 어제 체크인 안한 게스트 -</div>
     </div>
 
     <select id="noshowSelect" onchange="toggleNoshow()">
@@ -312,7 +312,7 @@ button {
 <div id="lowCleanModal" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-message" id="lowCleanModalMessage">
-오늘처럼 청소가 적은날은 청소 외 업무, 공용공간 청소 또는 평소에 닦지 않던곳 (커피머신/정수기 위, 수건캐비넷 위, 도어락 전면말고 상단면, 완강기 박스/소화기 등 먼지가 수북히 쌓인 곳 등등)을 청소해주시고 퇴근보고 시 청소외 업무 코멘트 남겨주세요.
+오늘처럼 청소가 적은날은 청소 외 업무, 공용공간 청소 또는 평소에 닦지 않던곳 (커피머신/정수기 위, 수건캐비넷 위, 도어락 전면말고 상단면, 냉장고 위/내부, 소화기 등 먼지가 수북히 쌓인 곳 등등)을 청소해주시고 퇴근보고 시 청소외 업무 코멘트 남겨주세요.
     </div>
     <button class="modal-button" onclick="confirmLowCleanWarning()">확인</button>
   </div>
@@ -553,7 +553,6 @@ async function submitForm(skipLowCleanWarning = false) {
 
   const text =
 `[출근보고]
-지점: S점
 근로자: ${worker}
 제출시각: ${submittedAtText}
 
