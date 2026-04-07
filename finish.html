@@ -314,8 +314,8 @@ button {
   <label class="main-label">근로자</label>
   <select id="worker">
     <option value="">선택하세요</option>
-    <option>김한얼</option>
-    <option>박상효</option>
+    <option>김현우</option>
+    <option>김주희</option>
     <option>기타</option>
   </select>
 
@@ -332,7 +332,7 @@ button {
   <div class="section">
     <div class="section-title-row">
       <div class="section-title">미체크인 리마인더 (<span id="reminderCount">0</span>)</div>
-      <div class="section-help">- 아직 안온 게스트 추가 안내, 아무때나 비밀번호 체크인하면 된다. -</div>
+      <div class="section-help">- 아직 안온 게스트 객실번호 안내+카드키사진 -</div>
     </div>
     <div id="reminder"></div>
   </div>
@@ -412,7 +412,7 @@ button {
 
   <div class="compact-row-wrap">
     <div class="compact-row">
-      <span class="compact-title">네이버 간단예약관리 (S점) 체크여부</span>
+      <span class="compact-title">네이버 간단예약관리 확인</span>
       <select id="naverSimpleCheck" class="compact-select" style="width:90px; min-width:90px;">
         <option value="" selected>--</option>
         <option value="완료">완료</option>
@@ -479,7 +479,7 @@ button {
   <div class="done-message">
   퇴근보고 제출완료.
   메신저에 사진 올려주세요. 
-  청소객실 사진, 수건함1, 비밀번호설정 캡쳐1 </div>
+  공용공간, 수건함1, 보일러(겨울), 모니터(카드키)</div>
 </div>
 
 <script>
@@ -593,7 +593,7 @@ function toggleNoshow() {
     box.style.display = "block";
 
     if (val === "전날노쇼") {
-      alert("오늘 반드시 메세지 보내서 언제오는지 확인해주세요 (오후근무자대상)");
+      alert("오늘 반드시 메세지 보내서 언제오는지 확인해주세요");
     }
 
     if (val === "전전날노쇼") {
@@ -803,7 +803,6 @@ async function submitForm() {
 
   const text =
 `[퇴근보고]
-지점: S점
 근로자: ${worker}
 제출시각: ${submittedAtText}
 
@@ -825,11 +824,9 @@ ${reminderText}
 대시보드: ${dashboard}
 메일잔여: ${naverMail}
 메일잔여 내용 상세: ${hasPendingMail ? naverMailDetail : "없음"}
-네이버 간단예약관리 (S점) 체크여부: ${naverSimpleCheck}
+네이버 간단예약관리 확인 : ${naverSimpleCheck}
 
 퇴근시간 변동사유: ${timeReasonText}
-
-추가 근무시간: ${extraWorkTime || "--"}
 
 특이사항: ${memo || "없음"}`;
 
