@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>출근보고</title>
+
+<style>
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; width: 100%; overflow-x: hidden; }
+body { font-family: Arial, sans-serif; background: #f5f6fa; }
+
+.container {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  background: white;
+  padding: 14px;
+}
+
+h2 { margin: 0 0 20px 0; font-size: 22px; }
+
+label.main-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+select, textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.section { margin-bottom: 26px; }
+
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.section-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.section-help {
+  font-size: 13px;
+  color: #666;
+}
+
+.room-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.room-type {
+  width: 90px;
+  font-weight: bold;
+}
+
+.room-options {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 10px;
+}
+
+.room-options label {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="formPage">
+
+<h2>출근보고</h2>
+
+<label class="main-label">근로자</label>
+<select id="worker">
+  <option value="">선택하세요</option>
+  <option>김한얼</option>
+  <option>박상효</option>
+  <option>기타</option>
+</select>
+
+<div class="section">
+  <div class="section-title">청소객실 (<span id="cleanCount">0</span>)</div>
+  <div id="clean"></div>
+</div>
+
+<div class="section">
+  <div class="section-title-row">
+    <div class="section-title">점검객실 (<span id="inspectCount">0</span>)</div>
+    <div class="section-help">- 청소는 아닌데 점검 -</div>
+  </div>
+  <div id="inspect"></div>
+</div>
+
+<div class="section">
+  <div class="section-title">노쇼</div>
+
+  <select id="noshowSelect">
+    <option value="">--</option>
+    <option value="없음">없음</option>
+    <option value="전날노쇼">전날노쇼</option>
+    <option value="전전날노쇼">전전날노쇼</option>
+  </select>
+
+  <div id="noshow"></div>
+</div>
+
+<label class="main-label">특이사항</label>
+<textarea id="memo"></textarea>
+
+<button onclick="submitForm()">출근완료</button>
+
+</div>
+
+<script>
+
+const webhookUrl = "https://hook.us2.make.com/swgwk8nx04xmiueo8moh61yhprtdbw0n";
+
+const rooms = {
+  "싱글룸": ["101","102","103","201","203","301","303"],
+  "더블룸": ["202","205","302","305"],
+  "트윈룸": ["204","304"]
+};
+
+function createSection(id) {
+  const container = document.getElementById(id);
+
+  for (let type in rooms) {
+    const line = document.createElement("div");
+    line.className = "room-line";
+
+    const t = document.createElement("div");
+    t.className = "room-type";
+    t.innerText = type;
+
+    const opt = document.createElement("div");
+    opt.className = "room-options";
+
+    rooms[type].forEach(r => {
+      const label = document.createElement("label");
+
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.value = r;
+      cb.name = id;
+      cb.onchange = updateCount;
+
+      label.appendChild(cb);
+      label.append(" " + r);
+      opt.appendChild(label);
+    });
+
+    line.appendChild(t);
+    line.appendChild(opt);
+    container.appendChild(line);
+  }
+}
+
+createSection("clean");
+createSection("inspect");
+createSection("noshow");
+
+function getChecked(name) {
+  return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(e => e.value);
+}
+
+function updateCount() {
+  document.getElementById("cleanCount").innerText = getChecked("clean").length;
+  document.getElementById("inspectCount").innerText = getChecked("inspect").length;
+}
+
+async function submitForm() {
+  const worker = document.getElementById("worker").value;
+  const clean = getChecked("clean");
+  const inspect = getChecked("inspect");
+  const noshowMode = document.getElementById("noshowSelect").value;
+  const noshowRooms = getChecked("noshow");
+  const memo = document.getElementById("memo").value;
+
+  if (!worker) {
+    alert("근로자 선택");
+    return;
+  }
+
+  const text =
+`[출근보고]
+근로자: ${worker}
+
+청소: ${clean.join(", ") || "없음"}
+점검: ${inspect.join(", ") || "없음"}
+노쇼: ${noshowMode} / ${noshowRooms.join(", ") || "없음"}
+
+특이사항: ${memo || "없음"}`;
+
+  await fetch(webhookUrl, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ text })
+  });
+
+  alert("전송완료");
+}
+
+</script>
+
+</body>
+</html>
